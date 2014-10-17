@@ -1,6 +1,11 @@
 import requests
 import re
+"""
+Dictionary mit userName(String) als Key und user object als Values
+---"---- für topic
 
+--> nix ist doppelt vorhanden!!
+"""
 
 class Topic:
     def __init__(self, name):
@@ -24,13 +29,18 @@ def openUrlAndReturnContent(url):
 
 frontPage = openUrlAndReturnContent("http://reddit.com/")
 
-userSet = set()
-topicSet = set()
+#key: userName (String)
+#values: userObject (User)
+userDict = {}
+topicDict = {}
 
 topicsPattern = re.compile('http://www.reddit.com/r/\w*/comments/\w*/\w*/')
 for topicUrl in re.findall(topicsPattern, frontPage):
-    topic = Topic(topicUrl)
-    topicSet.add(topic)
+    if topicUrl not in topicDict:
+        topic = Topic(topicUrl)
+        topicDict[topicUrl] = topic
+    else:
+        topic = topicDict[topicUrl]
 
     print("Found: " + topicUrl)
 
@@ -38,12 +48,16 @@ for topicUrl in re.findall(topicsPattern, frontPage):
 
     userPattern = re.compile('http://www.reddit.com/user/(\w+)')
     for userName in re.findall(userPattern, topicHtml):
-        user = User(userName)
-        userSet.add(user)
+        if userName not in userDict:
+            user = User(userName)
+            userDict[userName] = user
+        else:
+            user = userDict[userName]
+        
         topic.users.add(user)
         user.commentedTopics.add(topic)
         #print("\tuser: " + userName)
 
-for user in userSet :
-    print("user: " + user.name)
-    user.printTopics()
+for userName in userDict.keys() :
+    print("user: " + userName)
+    userDict[userName].printTopics()
