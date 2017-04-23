@@ -55,7 +55,10 @@ for topicUrl in re.findall(topicsPattern, frontPage):
 
     sidebar = topicSoup.find_all(attrs={"class": "sidecontentbox"})
     sidebar[0].replace_with("")
-     #print(topicSoup.prettify())
+
+for tag in soup.find_all(re.compile("t")):
+    print(tag.name)
+
 
 
     userPattern = re.compile('http://www.reddit.com/user/(\w+)')
